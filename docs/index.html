@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
   <title>Player Chooser</title>
-  <link rel="stylesheet" href="../src/index.css">
+  <link rel="stylesheet" href="./index.css" />
 </head>
 <body>
   <canvas id="board"></canvas>
-  <p id="description">Make all players put one finger on the screen. After 2 seconds, the last one to touch the screen is chosen.</p>
+  <p id="description">
+    Make all players put one finger on the screen. After 2&nbsp;seconds, the last one to touch the screen is chosen.
+  </p>
   <div id="live-region" aria-live="polite" aria-atomic="true"></div>
   <div id="update-available" hidden></div>
+
   <script>
     // Disable service worker registration for GitHub Pages
     if (navigator && navigator.serviceWorker) {
@@ -21,6 +24,6 @@
       }
     }
   </script>
-  <script type="module" src="../src/index.js"></script>
+  <script type="module" src="./index.js"></script>
 </body>
 </html>

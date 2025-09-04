@@ -17,14 +17,10 @@ const chosenPlayerAnimation = {
 };
 
 const ariaLiveLog = (msg) => {
-	const element = document.createElement("div");
-	element.textContent = msg;
-	ariaLive.append(element);
 };
 
+
 const ariaLiveReset = () => {
-	ariaLive.innerHTML = "";
-	ariaLiveLog("Reset");
 };
 
 const resizeCanvas = () => {

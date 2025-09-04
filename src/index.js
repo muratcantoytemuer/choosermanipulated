@@ -241,8 +241,7 @@ document.addEventListener(
 	},
 	{ passive: false }
 );
-
-if ("serviceWorker" in navigator && location.hostname !== "localhost") {
+if (false && "serviceWorker" in navigator && location.hostname != "localhost") {
 	window.addEventListener("load", () => {
 		navigator.serviceWorker.register("/sw.js").catch((err) => {
 			console.warn("ServiceWorker registration failed: ", err);

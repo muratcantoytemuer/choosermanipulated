@@ -124,7 +124,8 @@ const pickUnusedColor = () => {
 
 const addPlayer = (id, x, y) => {
 	const color = pickUnusedColor();
-	players.set(id, { x, y, color });
+	// NEU: downAt speichern, um "letzte Berührung" bestimmen zu können
+	players.set(id, { x, y, color, downAt: Date.now() });
 	draw();
 	ariaLiveLog(`Player ${id} added`);
 };
@@ -134,6 +135,7 @@ const updatePlayer = (id, x, y) => {
 	if (player) {
 		player.x = x;
 		player.y = y;
+		// downAt NICHT ändern – es geht um "zuletzt aufgelegt", nicht "zuletzt bewegt"
 		draw();
 	}
 };
@@ -144,12 +146,28 @@ const removePlayer = (id) => {
 	ariaLiveLog(`Player ${id} removed`);
 };
 
+// Hilfsfunktion: den zuletzt aufgelegten Spieler finden
+const findLatestPlayerId = () => {
+	let latestId = undefined;
+	let latestTime = -Infinity;
+	for (const [id, p] of players) {
+		if (p.downAt > latestTime) {
+			latestTime = p.downAt;
+			latestId = id;
+		}
+	}
+	return latestId;
+};
+
 const choosePlayer = (function () {
 	const choosePlayer = () => {
 		if (players.size < MIN_PLAYERS) return;
 
-		const choosen = Math.floor(Math.random() * players.size);
-		chosenPlayer = Array.from(players.keys())[choosen];
+		// GEÄNDERT: Nicht mehr zufällig – sondern immer der zuletzt aufgelegte Finger
+		const latestId = findLatestPlayerId();
+		if (latestId === undefined) return;
+
+		chosenPlayer = latestId;
 
 		const player = players.get(chosenPlayer);
 		chosenPlayerAnimation.startTime = Date.now();
@@ -168,6 +186,7 @@ const choosePlayer = (function () {
 	let timeout;
 	return () => {
 		window.clearTimeout(timeout);
+		// Nur wählen, wenn noch niemand gewählt wurde und genug Spieler drauf sind
 		if (chosenPlayer === undefined && players.size >= MIN_PLAYERS) {
 			timeout = window.setTimeout(choosePlayer, CHOOSE_DELAY_MS);
 		}
@@ -191,6 +210,7 @@ const reset = (function () {
 
 document.addEventListener("pointerdown", (e) => {
 	addPlayer(e.pointerId, e.clientX, e.clientY);
+	// Jede neue Berührung ist der "letzte" – Timer neu starten
 	choosePlayer();
 });
 document.addEventListener("pointermove", (e) => {
@@ -201,6 +221,7 @@ const onPointerRemove = (e) => {
 		reset();
 	} else {
 		removePlayer(e.pointerId);
+		// Falls der letzte Kandidat abgegangen ist, beim nächsten zuletzt aufgelegten bleiben
 		choosePlayer();
 	}
 };
